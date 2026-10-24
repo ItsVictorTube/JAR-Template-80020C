@@ -9,6 +9,8 @@
  */
 
 void default_constants(){
+  // Set the curves for throttle and turning.
+  chassis.setCurves(Curves::easeInOutCubic, Curves::turningCurve);
   // Each constant set is in the form of (maxVoltage, kP, kI, kD, startI).
   chassis.set_drive_constants(10, 1.5, 0, 10, 0);
   chassis.set_heading_constants(6, .4, 0, 1, 0);
@@ -96,7 +98,7 @@ void odom_test(){
     Brain.Screen.printAt(5,60, "Heading: %f", chassis.get_absolute_heading());
     Brain.Screen.printAt(5,80, "ForwardTracker: %f", chassis.get_ForwardTracker_position());
     Brain.Screen.printAt(5,100, "SidewaysTracker: %f", chassis.get_SidewaysTracker_position());
-    task::sleep(20);
+    vex::task::sleep(20);
   }
 }
 

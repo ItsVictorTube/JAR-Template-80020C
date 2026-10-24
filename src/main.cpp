@@ -23,6 +23,7 @@ competition Competition;
 /*  already have configured your motors.                                     */
 /*---------------------------------------------------------------------------*/
 
+#pragma region JAR-Template(DCTI varient) Config
 Drive chassis(
 
 //Pick your drive setup from the list below:
@@ -38,27 +39,27 @@ Drive chassis(
 //HOLONOMIC_TWO_ROTATION
 //
 //Write it here:
-ZERO_TRACKER_NO_ODOM,
+ZERO_TRACKER_ODOM,
 
 //Add the names of your Drive motors into the motor groups below, separated by commas, i.e. motor_group(Motor1,Motor2,Motor3).
 //You will input whatever motor names you chose when you configured your robot using the sidebar configurer, they don't have to be "Motor1" and "Motor2".
 
 //Left Motors:
-motor_group(),
+LeftDrive,
 
 //Right Motors:
-motor_group(),
+RightDrive,
 
-//Specify the PORT NUMBER of your inertial sensor, in PORT format (i.e. "PORT1", not simply "1"):
-PORT1,
+//Specify the PORT NUMBER or Instance of your inertial sensor, in PORT format (i.e. "PORT1", not simply "1"):
+Inertial,
 
 //Input your wheel diameter. (4" omnis are actually closer to 4.125"):
-3.25,
+4,
 
 //External ratio, must be in decimal, in the format of input teeth/output teeth.
 //If your motor has an 84-tooth gear and your wheel has a 60-tooth gear, this value will be 1.4.
 //If the motor drives the wheel directly, this value is 1:
-0.6,
+1.4,
 
 //Gyro scale, this is what your gyro reads when you spin the robot 360 degrees.
 //For most cases 360 will do fine here, but this scale factor can be very helpful when precision is necessary.
@@ -104,6 +105,7 @@ PORT3,     -PORT4,
 5.5
 
 );
+#pragma endregion
 
 int current_auton_selection = 0;
 bool auto_started = false;
@@ -171,7 +173,7 @@ void pre_auton() {
  * autons.cpp and declared in autons.h.
  */
 
-void autonomous(void) {
+void autonomous() {
   auto_started = true;
   switch(current_auton_selection){ 
     case 0:
@@ -211,8 +213,14 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void usercontrol(void) {
+void usercontrol() {
   // User control code here, inside the loop
+  static bool buttonReversed = false;
+
+  auto toggle_direction = []() {
+    buttonReversed = !buttonReversed;
+  };
+  Controller.ButtonL1.pressed(toggle_direction);
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
@@ -223,9 +231,7 @@ void usercontrol(void) {
     // update your motors, etc.
     // ........................................................................
 
-    //Replace this line with chassis.control_tank(); for tank drive 
-    //or chassis.control_holonomic(); for holo drive.
-    chassis.control_arcade();
+    chassis.control_arcade(6.35, buttonReversed);
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.

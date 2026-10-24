@@ -13,6 +13,8 @@ HOLONOMIC_TWO_ENCODER, HOLONOMIC_TWO_ROTATION};
 class Drive
 {
 private:
+  double (*throttleCurve)(double) = nullptr;
+  double (*turnCurve)(double) = nullptr;
   float wheel_diameter;
   float wheel_ratio;
   float gyro_scale;
@@ -26,6 +28,7 @@ private:
   vex:: triport ThreeWire = vex::triport(vex::PORT22);
 
 public: 
+  void setCurves(double (*throttle)(double), double (*turn)(double));
   drive_setup drive_setup = ZERO_TRACKER_NO_ODOM;
   motor_group DriveL;
   motor_group DriveR;
@@ -81,6 +84,8 @@ public:
 
   Drive(enum::drive_setup drive_setup, motor_group DriveL, motor_group DriveR, int gyro_port, float wheel_diameter, float wheel_ratio, float gyro_scale, int DriveLF_port, int DriveRF_port, int DriveLB_port, int DriveRB_port, int ForwardTracker_port, float ForwardTracker_diameter, float ForwardTracker_center_distance, int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_center_distance);
 
+  Drive(enum::drive_setup drive_setup, motor_group DriveL, motor_group DriveR, inertial Gyro, float wheel_diameter, float wheel_ratio, float gyro_scale, int DriveLF_port, int DriveRF_port, int DriveLB_port, int DriveRB_port, int ForwardTracker_port, float ForwardTracker_diameter, float ForwardTracker_center_distance, int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_center_distance);
+  
   void drive_with_voltage(float leftVoltage, float rightVoltage);
 
   float get_absolute_heading();
@@ -149,7 +154,8 @@ public:
   void holonomic_drive_to_pose(float X_position, float Y_position, float angle, float drive_max_voltage, float heading_max_voltage, float drive_settle_error, float drive_settle_time, float drive_timeout);
   void holonomic_drive_to_pose(float X_position, float Y_position, float angle, float drive_max_voltage, float heading_max_voltage, float drive_settle_error, float drive_settle_time, float drive_timeout, float drive_kp, float drive_ki, float drive_kd, float drive_starti, float heading_kp, float heading_ki, float heading_kd, float heading_starti);
 
-  void control_arcade();
-  void control_tank();
-  void control_holonomic();
+  void control_arcade(float deadband_value, bool reversed);
+  void control_tank(float deadband_value, bool reversed);
+  void control_holonomic(float deadband_value, bool reversed);
 };
+extern Drive chassis;

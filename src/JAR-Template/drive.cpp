@@ -1,5 +1,10 @@
 #include "vex.h"
 
+void Drive::setCurves(double (*throttle)(double), double (*turn)(double)) {
+  throttleCurve = throttle;
+  turnCurve = turn;
+}
+
 /**
  * Drive constructor for the chassis.
  * Even though there's only one constructor, there can be
@@ -29,6 +34,41 @@ Drive::Drive(enum::drive_setup drive_setup, motor_group DriveL, motor_group Driv
 int gyro_port, float wheel_diameter, float wheel_ratio, float gyro_scale, 
 int DriveLF_port, int DriveRF_port, int DriveLB_port, int DriveRB_port, 
 int ForwardTracker_port, float ForwardTracker_diameter, float ForwardTracker_center_distance, 
+int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_center_distance) : 
+  Drive(drive_setup, DriveL, DriveR, inertial(gyro_port), wheel_diameter, 
+  wheel_ratio, gyro_scale, DriveLF_port, DriveRF_port, DriveLB_port, DriveRB_port, 
+  ForwardTracker_port, ForwardTracker_diameter, ForwardTracker_center_distance, 
+  SidewaysTracker_port, SidewaysTracker_diameter, SidewaysTracker_center_distance)
+{};
+
+/**
+ * Drive constructor for the chassis.
+ * Even though there's only one constructor, there can be
+ * huge differences in implementation depending on the drive style
+ * selected.
+ * 
+ * @param drive_setup The style of drive, such as TANK_TWO_ROTATION.
+ * @param DriveL Left motor group.
+ * @param DriveR Right motor group.
+ * @param Gyro IMU.
+ * @param wheel_diameter Wheel diameter in inches.
+ * @param wheel_ratio External drive gear ratio.
+ * @param gyro_scale Scale factor in degrees.
+ * @param DriveLF_port Left front port for holonomic drives.
+ * @param DriveRF_port Right front port for holonomic drives.
+ * @param DriveLB_port Left back port for holonomic drives.
+ * @param DriveRB_port Right back port for holonomic drives.
+ * @param ForwardTracker_port Port for the forward tracker.
+ * @param ForwardTracker_diameter Diameter in inches.
+ * @param ForwardTracker_center_distance Horizontal distance in inches.
+ * @param SidewaysTracker_port Port for the sideways tracker.
+ * @param SidewaysTracker_diameter Diameter in inches.
+ * @param SidewaysTracker_center_distance Vertical distance in inches.
+ */
+Drive::Drive(enum::drive_setup drive_setup, motor_group DriveL, motor_group DriveR, 
+inertial Gyro, float wheel_diameter, float wheel_ratio, float gyro_scale, 
+int DriveLF_port, int DriveRF_port, int DriveLB_port, int DriveRB_port, 
+int ForwardTracker_port, float ForwardTracker_diameter, float ForwardTracker_center_distance, 
 int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_center_distance) :
   wheel_diameter(wheel_diameter),
   wheel_ratio(wheel_ratio),
@@ -43,7 +83,7 @@ int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_
   drive_setup(drive_setup),
   DriveL(DriveL),
   DriveR(DriveR),
-  Gyro(inertial(gyro_port)),
+  Gyro(Gyro),
   DriveLF(abs(DriveLF_port), is_reversed(DriveLF_port)),
   DriveRF(abs(DriveRF_port), is_reversed(DriveRF_port)),
   DriveLB(abs(DriveLB_port), is_reversed(DriveLB_port)),
@@ -53,16 +93,15 @@ int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_
   E_ForwardTracker(ThreeWire.Port[to_port(ForwardTracker_port)]),
   E_SidewaysTracker(ThreeWire.Port[to_port(SidewaysTracker_port)])
 {
-    if (drive_setup == TANK_ONE_FORWARD_ENCODER || drive_setup == TANK_ONE_FORWARD_ROTATION || drive_setup == ZERO_TRACKER_ODOM){
-      odom.set_physical_distances(ForwardTracker_center_distance, 0);
-    } 
-    if (drive_setup == TANK_ONE_SIDEWAYS_ENCODER || drive_setup == TANK_ONE_SIDEWAYS_ROTATION || 
-    drive_setup == TANK_TWO_ENCODER || drive_setup == TANK_TWO_ROTATION ||
-    drive_setup == HOLONOMIC_TWO_ENCODER || drive_setup == HOLONOMIC_TWO_ROTATION){
-      odom.set_physical_distances(ForwardTracker_center_distance, SidewaysTracker_center_distance);
-    }
+  if (drive_setup == TANK_ONE_FORWARD_ENCODER || drive_setup == TANK_ONE_FORWARD_ROTATION || drive_setup == ZERO_TRACKER_ODOM) {
+    odom.set_physical_distances(ForwardTracker_center_distance, 0);
+  } 
+  if (drive_setup == TANK_ONE_SIDEWAYS_ENCODER || drive_setup == TANK_ONE_SIDEWAYS_ROTATION || 
+    drive_setup == TANK_TWO_ENCODER || drive_setup == TANK_TWO_ROTATION || 
+    drive_setup == HOLONOMIC_TWO_ENCODER || drive_setup == HOLONOMIC_TWO_ROTATION) {
+    odom.set_physical_distances(ForwardTracker_center_distance, SidewaysTracker_center_distance);
+  }
 }
-
 /**
  * Drives each side of the chassis at the specified voltage.
  * 
@@ -688,9 +727,12 @@ void Drive::holonomic_drive_to_pose(float X_position, float Y_position, float an
  * Default deadband is 5.
  */
 
-void Drive::control_arcade(){
-  float throttle = deadband(controller(primary).Axis3.value(), 5);
-  float turn = deadband(controller(primary).Axis1.value(), 5);
+void Drive::control_arcade(float deadband_value, bool reversed){
+  float throttle = deadband(controller(primary).Axis3.value(), deadband_value? deadband_value : 5);
+  float turn = deadband(controller(primary).Axis1.value(), deadband_value? deadband_value : 5);
+  throttle = Curves::normalize(throttle, throttleCurve);
+  turn = Curves::normalize(turn, turnCurve);
+  throttle = reversed? -throttle : throttle;
   DriveL.spin(fwd, to_volt(throttle+turn), volt);
   DriveR.spin(fwd, to_volt(throttle-turn), volt);
 }
@@ -700,10 +742,15 @@ void Drive::control_arcade(){
  * Default deadband is 5.
  */
 
-void Drive::control_holonomic(){
-  float throttle = deadband(controller(primary).Axis3.value(), 5);
-  float turn = deadband(controller(primary).Axis1.value(), 5);
-  float strafe = deadband(controller(primary).Axis4.value(), 5);
+void Drive::control_holonomic(float deadband_value, bool reversed){
+  float throttle = deadband(controller(primary).Axis3.value(), deadband_value? deadband_value : 5);
+  float turn = deadband(controller(primary).Axis1.value(), deadband_value? deadband_value : 5);
+  float strafe = deadband(controller(primary).Axis4.value(), deadband_value? deadband_value : 5);
+
+  throttle = Curves::normalize(throttle, throttleCurve);
+  turn = Curves::normalize(turn, turnCurve);
+  throttle = reversed? -throttle : throttle;
+
   DriveLF.spin(fwd, to_volt(throttle+turn+strafe), volt);
   DriveRF.spin(fwd, to_volt(throttle-turn-strafe), volt);
   DriveLB.spin(fwd, to_volt(throttle+turn-strafe), volt);
@@ -715,9 +762,15 @@ void Drive::control_holonomic(){
  * Default deadband is 5.
  */
 
-void Drive::control_tank(){
-  float leftthrottle = deadband(controller(primary).Axis3.value(), 5);
-  float rightthrottle = deadband(controller(primary).Axis2.value(), 5);
+void Drive::control_tank(float deadband_value, bool reversed){
+  float leftthrottle = deadband(controller(primary).Axis3.value(), deadband_value? deadband_value : 5);
+  float rightthrottle = deadband(controller(primary).Axis2.value(), deadband_value? deadband_value : 5);
+
+  leftthrottle = Curves::normalize(leftthrottle, throttleCurve);
+  rightthrottle = Curves::normalize(rightthrottle, throttleCurve);
+  leftthrottle = reversed? -leftthrottle : leftthrottle;
+  rightthrottle = reversed? -rightthrottle : rightthrottle;
+  
   DriveL.spin(fwd, to_volt(leftthrottle), volt);
   DriveR.spin(fwd, to_volt(rightthrottle), volt);
 }
