@@ -1,5 +1,7 @@
 #include "vex.h"
 
+
+#pragma region utils
 /**
  * Converts an angle to an equivalent one in the range [0, 360).
  * 
@@ -217,3 +219,4 @@ float clamp_min_voltage(float drive_output, float drive_min_voltage){
   }
   return drive_output;
 }
+#pragma endregion

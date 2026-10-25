@@ -1,5 +1,6 @@
 #include "vex.h"
 
+#pragma region autons
 /**
  * Resets the constants for auton movement.
  * Modify these to change the default behavior of functions like
@@ -129,3 +130,4 @@ void holonomic_odom_test(){
   chassis.holonomic_drive_to_pose(0, 18, 270);
   chassis.holonomic_drive_to_pose(0, 0, 0);
 }
+#pragma endregion

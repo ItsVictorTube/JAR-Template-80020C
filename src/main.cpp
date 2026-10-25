@@ -1,7 +1,15 @@
 #include "vex.h"
+#include <algorithm>
 
 using namespace vex;
 competition Competition;
+
+#pragma region Declarations
+#pragma endregion
+#pragma region Definitions
+#pragma endregion
+
+//Config and autons
 
 /*---------------------------------------------------------------------------*/
 /*                             VEXcode Config                                */

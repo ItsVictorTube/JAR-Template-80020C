@@ -1,7 +1,18 @@
 import json
+import os
+
+version_file_path = "version.txt"
+file_name = "dabotics_80020C"
+
+def get_version(path):
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            return f.read()
+
+version = get_version(version_file_path)
 
 # 1. Read your C++ source code text string
-with open("src/merged_code.cpp", "r") as f:
+with open(f"src/merged_code_{version}.cpp", "r") as f:
     cpp_code_string = f.read()
 
 # 2. Open and parse the VS Code configuration json file
@@ -45,7 +56,7 @@ v5cpp_bundle = {
 }
 
 # 5. Output the single final .v5cpp package file
-with open("robot_project.v5cpp", "w") as f:
+with open(f"{file_name}_{version}.v5cpp", "w") as f:
     json.dump(v5cpp_bundle, f)
 
-print(f"✅ Created robot_project.v5cpp using SDK {sdk_version} on Slot {slot_number}!")
+print(f"✅ Created {file_name}_{version}.v5cpp using SDK {sdk_version} on Slot {slot_number}!")

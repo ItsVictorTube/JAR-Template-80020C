@@ -11,6 +11,7 @@ brain Brain;
 //motor LeftFront = motor(PORT1, ratio6_1, false);
 
 //Add your devices below, and don't forget to do the same in robot-config.h:
+#pragma region configured devices
 inertial Inertial(PORT20);
 controller Controller(primary);
 motor LeftFront(PORT1, ratio18_1, true);
@@ -19,6 +20,7 @@ motor RightFront(PORT3, ratio18_1, false);
 motor RightBack(PORT4, ratio18_1, false);
 motor_group LeftDrive(LeftBack, LeftFront);
 motor_group RightDrive(RightBack, RightFront);
+#pragma endregion
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

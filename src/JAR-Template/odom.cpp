@@ -1,5 +1,7 @@
+#include "odom.h"
 #include "vex.h"
 
+#pragma region Odometry Class
 /**
  * Setter method for tracker center distances.
  * The forward tracker center distance is the horizontal distance from the 
@@ -92,3 +94,4 @@ void Odom::update_position(float ForwardTracker_position, float SidewaysTracker_
   X_position+=X_position_delta;
   Y_position+=Y_position_delta;
 }
+#pragma endregion
