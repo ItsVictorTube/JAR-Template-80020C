@@ -30,7 +30,7 @@ private:
 
 public: 
   void setCurves(double (*throttle)(double), double (*turn)(double));
-  drive_setup drive_setup = ZERO_TRACKER_NO_ODOM;
+  drive_setup drive_setup = drive_setup::ZERO_TRACKER_NO_ODOM;
   vex::motor_group DriveL;
   vex::motor_group DriveR;
   vex::inertial Gyro;
