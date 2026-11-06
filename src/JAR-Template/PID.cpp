@@ -1,7 +1,5 @@
-#include "PID.h"
 #include "vex.h"
 
-#pragma region PID Class
 /**
  * PID constructor with P, I, D, and starti.
  * Starti keeps the I term at 0 until error is less than starti.
@@ -134,4 +132,3 @@ bool PID::is_settled(){
   }
   return(false);
 }
-#pragma endregion

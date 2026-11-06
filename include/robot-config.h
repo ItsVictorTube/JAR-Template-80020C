@@ -1,19 +1,12 @@
-#pragma once
+using namespace vex;
 
-extern vex::brain Brain;
+extern brain Brain;
 
-extern vex::inertial Inertial;
-extern vex::controller Controller;
+//To set up a motor called LeftFront here, you'd use
+//extern motor LeftFront;
 
-extern vex::motor LeftFront;
-extern vex::motor LeftBack;
-extern vex::motor RightFront;
-extern vex::motor RightBack;
-extern vex::motor_group LeftDrive;
-extern vex::motor_group RightDrive;
-/**
- * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
- *
- * This should be called at the start of your int main function.
- */
-void vexcodeInit();
+//Add your devices below, and don't forget to do the same in robot-config.cpp:
+
+
+
+void  vexcodeInit( void );

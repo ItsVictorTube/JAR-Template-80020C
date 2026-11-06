@@ -1,7 +1,6 @@
 #pragma once
 #include "vex.h"
 
-#pragma region Drive Class
 enum drive_setup {ZERO_TRACKER_NO_ODOM, ZERO_TRACKER_ODOM, TANK_ONE_FORWARD_ENCODER, TANK_ONE_FORWARD_ROTATION, 
 TANK_ONE_SIDEWAYS_ENCODER, TANK_ONE_SIDEWAYS_ROTATION, TANK_TWO_ENCODER, TANK_TWO_ROTATION, 
 HOLONOMIC_TWO_ENCODER, HOLONOMIC_TWO_ROTATION};
@@ -14,8 +13,6 @@ HOLONOMIC_TWO_ENCODER, HOLONOMIC_TWO_ROTATION};
 class Drive
 {
 private:
-  double (*throttleCurve)(double) = nullptr;
-  double (*turnCurve)(double) = nullptr;
   float wheel_diameter;
   float wheel_ratio;
   float gyro_scale;
@@ -26,23 +23,23 @@ private:
   float SidewaysTracker_center_distance;
   float SidewaysTracker_diameter;
   float SidewaysTracker_in_to_deg_ratio;
-  vex::triport ThreeWire = vex::triport(vex::PORT22);
+  vex:: triport ThreeWire = vex::triport(vex::PORT22);
 
 public: 
-  void setCurves(double (*throttle)(double), double (*turn)(double));
-  drive_setup drive_setup = drive_setup::ZERO_TRACKER_NO_ODOM;
-  vex::motor_group DriveL;
-  vex::motor_group DriveR;
-  vex::inertial Gyro;
-  vex::motor DriveLF;
-  vex::motor DriveRF;
-  vex::motor DriveLB;
-  vex::motor DriveRB;
-  vex::rotation R_ForwardTracker;
-  vex::rotation R_SidewaysTracker;
-  vex::encoder E_ForwardTracker;
-  vex::encoder E_SidewaysTracker;
+  drive_setup drive_setup = ZERO_TRACKER_NO_ODOM;
+  motor_group DriveL;
+  motor_group DriveR;
+  inertial Gyro;
+  motor DriveLF;
+  motor DriveRF;
+  motor DriveLB;
+  motor DriveRB;
+  rotation R_ForwardTracker;
+  rotation R_SidewaysTracker;
+  encoder E_ForwardTracker;
+  encoder E_SidewaysTracker;
 
+  float deadband_width = 5.0;
   float turn_max_voltage;
   float turn_kp;
   float turn_ki;
@@ -83,10 +80,8 @@ public:
   float boomerang_lead;
   float boomerang_setback;
 
-  Drive(enum::drive_setup drive_setup, vex::motor_group DriveL, vex::motor_group DriveR, int gyro_port, float wheel_diameter, float wheel_ratio, float gyro_scale, int DriveLF_port, int DriveRF_port, int DriveLB_port, int DriveRB_port, int ForwardTracker_port, float ForwardTracker_diameter, float ForwardTracker_center_distance, int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_center_distance);
+  Drive(enum::drive_setup drive_setup, motor_group DriveL, motor_group DriveR, int gyro_port, float wheel_diameter, float wheel_ratio, float gyro_scale, int DriveLF_port, int DriveRF_port, int DriveLB_port, int DriveRB_port, int ForwardTracker_port, float ForwardTracker_diameter, float ForwardTracker_center_distance, int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_center_distance);
 
-  Drive(enum::drive_setup drive_setup, vex::motor_group DriveL, vex::motor_group DriveR, vex::inertial Gyro, float wheel_diameter, float wheel_ratio, float gyro_scale, int DriveLF_port, int DriveRF_port, int DriveLB_port, int DriveRB_port, int ForwardTracker_port, float ForwardTracker_diameter, float ForwardTracker_center_distance, int SidewaysTracker_port, float SidewaysTracker_diameter, float SidewaysTracker_center_distance);
-  
   void drive_with_voltage(float leftVoltage, float rightVoltage);
 
   float get_absolute_heading();
@@ -155,9 +150,8 @@ public:
   void holonomic_drive_to_pose(float X_position, float Y_position, float angle, float drive_max_voltage, float heading_max_voltage, float drive_settle_error, float drive_settle_time, float drive_timeout);
   void holonomic_drive_to_pose(float X_position, float Y_position, float angle, float drive_max_voltage, float heading_max_voltage, float drive_settle_error, float drive_settle_time, float drive_timeout, float drive_kp, float drive_ki, float drive_kd, float drive_starti, float heading_kp, float heading_ki, float heading_kd, float heading_starti);
 
-  void control_arcade(float deadband_value, bool reversed);
-  void control_tank(float deadband_value, bool reversed);
-  void control_holonomic(float deadband_value, bool reversed);
+  void control_arcade();
+  void control_tank();
+  void control_holonomic();
 };
 extern Drive chassis;
-#pragma endregion
