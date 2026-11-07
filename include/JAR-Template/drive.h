@@ -39,6 +39,8 @@ public:
   encoder E_ForwardTracker;
   encoder E_SidewaysTracker;
 
+  float (*throttle_curve)(float) = nullptr;
+  float (*turn_curve)(float) = nullptr;
   float deadband_width = 5.0;
   float turn_max_voltage;
   float turn_kp;

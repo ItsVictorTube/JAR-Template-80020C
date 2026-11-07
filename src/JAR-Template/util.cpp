@@ -108,7 +108,7 @@ bool is_reversed(double input){
  */
 
 float to_volt(float percent){
-  return(percent*12.0/100.0);
+  return(percent*12.0f/127.0f);
 }
 
 /**
@@ -137,7 +137,7 @@ int to_port(int port){
  */
 
 float deadband(float input, float width){
-  if (fabs(input)<width){
+  if (fabsf(input)<width){
     return(0);
   }
   return(input);
@@ -172,7 +172,7 @@ bool is_line_settled(float desired_X, float desired_Y, float desired_angle_deg, 
  */
 
 float left_voltage_scaling(float drive_output, float heading_output){
-  float ratio = std::max(fabs(drive_output+heading_output), fabs(drive_output-heading_output))/12.0;
+  float ratio = std::max(fabsf(drive_output+heading_output), fabsf(drive_output-heading_output))/12.0;
   if (ratio > 1) {
     return (drive_output+heading_output)/ratio;
   }
@@ -190,7 +190,7 @@ float left_voltage_scaling(float drive_output, float heading_output){
  */
 
 float right_voltage_scaling(float drive_output, float heading_output){
-  float ratio = std::max(fabs(drive_output+heading_output), fabs(drive_output-heading_output))/12.0;
+  float ratio = std::max(fabsf(drive_output+heading_output), fabsf(drive_output-heading_output))/12.0;
   if (ratio > 1) {
     return (drive_output-heading_output)/ratio;
   }
@@ -216,4 +216,28 @@ float clamp_min_voltage(float drive_output, float drive_min_voltage){
     return drive_min_voltage;
   }
   return drive_output;
+}
+
+float turning_curve(float x) {
+  float k = 0.5 * M_PI / 2;
+  return sin(k * sin(k * x)) / sin(k);
+} 
+
+float ease_in_out_cubic(float x) {
+  if (x > 0) {
+    return x < 0.5 ? 4 * x * x * x : 1 - pow(-2 * x + 2, 3) / 2;
+  } else {
+    return x > -0.5 ? 4 * x * x * x : pow(2 * x + 2, 3) / 2 - 1;
+  }
+}
+
+float scale_input(float raw_input, float (*curve)(float)) {
+  // Normalize the input to the range [-1, 1]
+  float normalized = raw_input / 127.0f;
+
+  // Apply the curve function if provided, otherwise use the normalized value
+  float curved = (curve != nullptr) ? curve(normalized) : normalized;
+
+  // Scale back to the range [-127, 127]
+  return curved * 127.0f;
 }

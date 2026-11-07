@@ -90,7 +90,7 @@ float settle_error, float settle_time, float timeout, float update_period) :
  */
 
 float PID::compute(float error){
-  if (fabs(error) < starti){
+  if (fabsf(error) < starti){
     accumulated_error+=error;
   }
   // Checks if the error has crossed 0, and if it has, it eliminates the integral term.
@@ -102,7 +102,7 @@ float PID::compute(float error){
 
   previous_error=error;
 
-  if(fabs(error)<settle_error){
+  if(fabsf(error)<settle_error){
     time_spent_settled+=10;
   } else {
     time_spent_settled = 0;

@@ -502,7 +502,7 @@ void Drive::drive_to_point(float X_position, float Y_position, float drive_min_v
     
     if (drive_error<drive_settle_error) { heading_output = 0; }
 
-    drive_output = clamp(drive_output, -fabs(heading_scale_factor)*drive_max_voltage, fabs(heading_scale_factor)*drive_max_voltage);
+    drive_output = clamp(drive_output, -fabsf(heading_scale_factor)*drive_max_voltage, fabsf(heading_scale_factor)*drive_max_voltage);
     heading_output = clamp(heading_output, -heading_max_voltage, heading_max_voltage);
 
     drive_output = clamp_min_voltage(drive_output, drive_min_voltage);
@@ -587,7 +587,7 @@ void Drive::drive_to_pose(float X_position, float Y_position, float angle, float
     heading_error = reduce_negative_90_to_90(heading_error);
     float heading_output = headingPID.compute(heading_error);
 
-    drive_output = clamp(drive_output, -fabs(heading_scale_factor)*drive_max_voltage, fabs(heading_scale_factor)*drive_max_voltage);
+    drive_output = clamp(drive_output, -fabsf(heading_scale_factor)*drive_max_voltage, fabsf(heading_scale_factor)*drive_max_voltage);
     heading_output = clamp(heading_output, -heading_max_voltage, heading_max_voltage);
 
     drive_output = clamp_min_voltage(drive_output, drive_min_voltage);
@@ -691,8 +691,12 @@ void Drive::holonomic_drive_to_pose(float X_position, float Y_position, float an
 void Drive::control_arcade(){
   float throttle = deadband(controller(primary).Axis3.value(), deadband_width);
   float turn = deadband(controller(primary).Axis1.value(), deadband_width);
-  DriveL.spin(fwd, to_volt(throttle+turn), volt);
-  DriveR.spin(fwd, to_volt(throttle-turn), volt);
+
+  float processed_throttle = scale_input(throttle, throttle_curve);
+  float processed_turn = scale_input(turn, turn_curve);
+
+  DriveL.spin(fwd, to_volt(processed_throttle+processed_turn), volt);
+  DriveR.spin(fwd, to_volt(processed_throttle-processed_turn), volt);
 }
 
 /**
