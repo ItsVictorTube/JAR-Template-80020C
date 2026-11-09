@@ -1,6 +1,7 @@
 #pragma once
 #include "vex.h"
 
+#pragma region Drive Class
 enum drive_setup {ZERO_TRACKER_NO_ODOM, ZERO_TRACKER_ODOM, TANK_ONE_FORWARD_ENCODER, TANK_ONE_FORWARD_ROTATION, 
 TANK_ONE_SIDEWAYS_ENCODER, TANK_ONE_SIDEWAYS_ROTATION, TANK_TWO_ENCODER, TANK_TWO_ROTATION, 
 HOLONOMIC_TWO_ENCODER, HOLONOMIC_TWO_ROTATION};
@@ -39,8 +40,6 @@ public:
   encoder E_ForwardTracker;
   encoder E_SidewaysTracker;
 
-  float (*throttle_curve)(float) = nullptr;
-  float (*turn_curve)(float) = nullptr;
   float deadband_width = 5.0;
   float turn_max_voltage;
   float turn_kp;
@@ -157,3 +156,4 @@ public:
   void control_holonomic();
 };
 extern Drive chassis;
+#pragma endregion

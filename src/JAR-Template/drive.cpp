@@ -1,5 +1,6 @@
 #include "vex.h"
 
+#pragma region Drive Class
 /**
  * Drive constructor for the chassis.
  * Even though there's only one constructor, there can be
@@ -692,11 +693,8 @@ void Drive::control_arcade(){
   float throttle = deadband(controller(primary).Axis3.value(), deadband_width);
   float turn = deadband(controller(primary).Axis1.value(), deadband_width);
 
-  float processed_throttle = scale_input(throttle, throttle_curve);
-  float processed_turn = scale_input(turn, turn_curve);
-
-  DriveL.spin(fwd, to_volt(processed_throttle+processed_turn), volt);
-  DriveR.spin(fwd, to_volt(processed_throttle-processed_turn), volt);
+  DriveL.spin(fwd, to_volt(throttle+turn), volt);
+  DriveR.spin(fwd, to_volt(throttle-turn), volt);
 }
 
 /**
@@ -734,3 +732,4 @@ int Drive::position_track_task(){
   chassis.position_track();
   return(0);
 }
+#pragma endregion

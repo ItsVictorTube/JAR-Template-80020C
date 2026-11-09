@@ -1,3 +1,4 @@
+#pragma region Odom Class
 /**
  * General-use odometry class with X_position, Y_position, and
  * orientation_deg being the relevant outputs. This works for one
@@ -19,3 +20,4 @@ public:
   void update_position(float ForwardTracker_position, float SidewaysTracker_position, float orientation_deg);
   void set_physical_distances(float ForwardTracker_center_distance, float SidewaysTracker_center_distance);
 };
+#pragma endregion

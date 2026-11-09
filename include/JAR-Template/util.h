@@ -1,3 +1,4 @@
+#pragma region Utility Functions
 float reduce_0_to_360(float angle);
 
 float reduce_negative_180_to_180(float angle);
@@ -31,3 +32,4 @@ float turning_curve(float x);
 float ease_in_out_cubic(float x);
 
 float scale_input(float raw_input, float (*curve)(float));
+#pragma endregion

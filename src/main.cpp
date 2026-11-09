@@ -3,6 +3,13 @@
 using namespace vex;
 competition Competition;
 
+#pragma region Declarations
+#pragma endregion
+#pragma region Definitions
+#pragma endregion
+
+//Config and autons
+
 /*---------------------------------------------------------------------------*/
 /*                             VEXcode Config                                */
 /*                                                                           */
@@ -23,6 +30,7 @@ competition Competition;
 /*  already have configured your motors.                                     */
 /*---------------------------------------------------------------------------*/
 
+#pragma region JAR-Template(DCTI varient) Config
 Drive chassis(
 
 //Pick your drive setup from the list below:
@@ -44,21 +52,21 @@ ZERO_TRACKER_NO_ODOM,
 //You will input whatever motor names you chose when you configured your robot using the sidebar configurer, they don't have to be "Motor1" and "Motor2".
 
 //Left Motors:
-motor_group(),
+LeftDrive,
 
 //Right Motors:
-motor_group(),
+RightDrive,
 
 //Specify the PORT NUMBER of your inertial sensor, in PORT format (i.e. "PORT1", not simply "1"):
 PORT1,
 
 //Input your wheel diameter. (4" omnis are actually closer to 4.125"):
-3.25,
+4.0,
 
 //External ratio, must be in decimal, in the format of input teeth/output teeth.
 //If your motor has an 84-tooth gear and your wheel has a 60-tooth gear, this value will be 1.4.
 //If the motor drives the wheel directly, this value is 1:
-0.6,
+1.4,
 
 //Gyro scale, this is what your gyro reads when you spin the robot 360 degrees.
 //For most cases 360 will do fine here, but this scale factor can be very helpful when precision is necessary.
@@ -92,7 +100,7 @@ PORT3,     -PORT4,
 //Input Forward Tracker center distance (a positive distance corresponds to a tracker on the right side of the robot, negative is left.)
 //For a zero tracker tank drive with odom, put the positive distance from the center of the robot to the right side of the drive.
 //This distance is in inches:
--2,
+8.0,
 
 //Input the Sideways Tracker Port, following the same steps as the Forward Tracker Port:
 1,
@@ -104,6 +112,7 @@ PORT3,     -PORT4,
 5.5
 
 );
+#pragma endregion
 
 int current_auton_selection = 0;
 bool auto_started = false;
@@ -115,9 +124,7 @@ bool auto_started = false;
  * be more descriptive, if you like.
  */
 
-void pre_auton() {
-  // Initializing Robot Configuration. DO NOT REMOVE!
-  vexcodeInit();
+void pre_auton(void) {
   default_constants();
 
   while(!auto_started){
@@ -211,6 +218,23 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+void arcade(bool reversed){
+  float throttle = deadband(Controller.Axis3.position(), 5);
+  float turn = deadband(Controller.Axis1.position(), 5);
+
+  float processed_throttle = scale_input(throttle, ease_in_out_cubic);
+  float processed_turn = scale_input(turn, turning_curve);
+
+  if (reversed){
+    processed_throttle = -processed_throttle;
+  }
+
+  float left_voltage = to_volt(processed_throttle + processed_turn);
+  float right_voltage = to_volt(processed_throttle - processed_turn);
+
+  chassis.drive_with_voltage(left_voltage, right_voltage);
+}
+
 void usercontrol(void) {
   // User control code here, inside the loop
   while (1) {
@@ -223,9 +247,8 @@ void usercontrol(void) {
     // update your motors, etc.
     // ........................................................................
 
-    //Replace this line with chassis.control_tank(); for tank drive 
-    //or chassis.control_holonomic(); for holo drive.
-    chassis.control_arcade();
+    bool isReversed = Controller.ButtonL1.pressing();
+    arcade(isReversed);
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.

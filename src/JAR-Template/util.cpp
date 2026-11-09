@@ -1,5 +1,6 @@
 #include "vex.h"
 
+#pragma region Utility Functions
 /**
  * Converts an angle to an equivalent one in the range [0, 360).
  * 
@@ -108,7 +109,7 @@ bool is_reversed(double input){
  */
 
 float to_volt(float percent){
-  return(percent*12.0f/127.0f);
+  return(percent*12.0/100.0);
 }
 
 /**
@@ -219,7 +220,7 @@ float clamp_min_voltage(float drive_output, float drive_min_voltage){
 }
 
 float turning_curve(float x) {
-  float k = 0.5 * M_PI / 2;
+  float k = M_PI / 4;
   return sin(k * sin(k * x)) / sin(k);
 } 
 
@@ -233,11 +234,12 @@ float ease_in_out_cubic(float x) {
 
 float scale_input(float raw_input, float (*curve)(float)) {
   // Normalize the input to the range [-1, 1]
-  float normalized = raw_input / 127.0f;
+  float normalized = raw_input / 100.0;
 
   // Apply the curve function if provided, otherwise use the normalized value
   float curved = (curve != nullptr) ? curve(normalized) : normalized;
 
-  // Scale back to the range [-127, 127]
-  return curved * 127.0f;
+  // Scale back to the range [-100, 100]
+  return curved * 100;
 }
+#pragma endregion

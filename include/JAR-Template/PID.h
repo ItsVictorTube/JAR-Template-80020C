@@ -1,6 +1,6 @@
 #pragma once
-#include "vex.h"
 
+#pragma region PID Class
 /**
  * General-use PID class for drivetrains. It includes both
  * control calculation and settling calculation. The default
@@ -35,3 +35,4 @@ public:
 
   bool is_settled();
 };
+#pragma endregion

@@ -1,5 +1,6 @@
 #include "vex.h"
 
+#pragma region Odom Class
 /**
  * Setter method for tracker center distances.
  * The forward tracker center distance is the horizontal distance from the 
@@ -59,7 +60,7 @@ void Odom::update_position(float ForwardTracker_position, float SidewaysTracker_
   this->SideWaysTracker_position=SidewaysTracker_position;
   float orientation_rad = to_rad(orientation_deg);
   float prev_orientation_rad = to_rad(this->orientation_deg);
-  float orientation_delta_rad = orientation_rad-prev_orientation_rad;
+  float orientation_delta_rad = to_rad(reduce_negative_180_to_180(orientation_deg-this->orientation_deg));
   this->orientation_deg=orientation_deg;
 
   float local_X_position;
@@ -92,3 +93,4 @@ void Odom::update_position(float ForwardTracker_position, float SidewaysTracker_
   X_position+=X_position_delta;
   Y_position+=Y_position_delta;
 }
+#pragma endregion
