@@ -25,3 +25,9 @@ float left_voltage_scaling(float drive_output, float heading_output);
 float right_voltage_scaling(float drive_output, float heading_output);
 
 float clamp_min_voltage(float drive_output, float drive_min_voltage);
+
+float turning_curve(float x);
+
+float ease_in_out_cubic(float x);
+
+float scale_input(float raw_input, float (*curve)(float));

@@ -217,3 +217,28 @@ float clamp_min_voltage(float drive_output, float drive_min_voltage){
   }
   return drive_output;
 }
+
+
+float turning_curve(float x) {
+  float k = M_PI / 4;
+  return sin(k * sin(k * x)) / sin(k);
+} 
+
+float ease_in_out_cubic(float x) {
+  if (x > 0) {
+    return x < 0.5 ? 4 * x * x * x : 1 - pow(-2 * x + 2, 3) / 2;
+  } else {
+    return x > -0.5 ? 4 * x * x * x : pow(2 * x + 2, 3) / 2 - 1;
+  }
+}
+
+float scale_input(float raw_input, float (*curve)(float)) {
+  // Normalize the input to the range [-1, 1]
+  float normalized = raw_input / 100.0;
+
+  // Apply the curve function if provided, otherwise use the normalized value
+  float curved = (curve != nullptr) ? curve(normalized) : normalized;
+
+  // Scale back to the range [-100, 100]
+  return curved * 100;
+}

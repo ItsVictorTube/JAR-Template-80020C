@@ -25,7 +25,7 @@ bool auto_started = false;
  * be more descriptive, if you like.
  */
 
-void pre_auton() {
+void pre_auton(void) {
   default_constants();
 
   while(!auto_started){
@@ -118,6 +118,23 @@ void autonomous(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
+
+void arcade(bool reversed){
+  float throttle = deadband(Controller.Axis3.position(), 5);
+  float turn = deadband(Controller.Axis1.position(), 5);
+
+  float processed_throttle = scale_input(throttle, ease_in_out_cubic);
+  float processed_turn = scale_input(turn, turning_curve);
+
+  if (reversed){
+    processed_throttle = -processed_throttle;
+  }
+
+  float left_voltage = to_volt(processed_throttle + processed_turn);
+  float right_voltage = to_volt(processed_throttle - processed_turn);
+
+  chassis.drive_with_voltage(left_voltage, right_voltage);
+}
 
 void usercontrol(void) {
   // User control code here, inside the loop
