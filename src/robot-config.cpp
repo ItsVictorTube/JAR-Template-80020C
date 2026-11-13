@@ -113,7 +113,3 @@ PORT5,
 
 );
 #pragma endregion
-
-void vexcodeInit( void ) {
-  // nothing to initialize
-}
