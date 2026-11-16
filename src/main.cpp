@@ -119,16 +119,12 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void arcade(bool reversed){
+void arcade(){
   float throttle = deadband(Controller.Axis3.position(), 5);
   float turn = deadband(Controller.Axis1.position(), 5);
 
   float processed_throttle = scale_input(throttle, ease_in_out_cubic);
   float processed_turn = scale_input(turn, turning_curve);
-
-  if (reversed){
-    processed_throttle = -processed_throttle;
-  }
 
   float left_voltage = to_volt(processed_throttle + processed_turn);
   float right_voltage = to_volt(processed_throttle - processed_turn);
@@ -150,6 +146,12 @@ void usercontrol(void) {
 
     //Replace this line with chassis.control_tank(); for tank drive 
     //or chassis.control_holonomic(); for holo drive.
+    bool claw_state = Controller.ButtonL1.pressing();
+    ClawSolenoid.set(claw_state);
+    bool flipper_state = Controller.ButtonL2.pressing();
+    FlipperSolenoid.set(flipper_state);
+    
+    
     chassis.control_arcade();
 
     wait(20, msec); // Sleep the task for a short amount of time to
