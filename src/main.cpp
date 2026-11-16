@@ -22,98 +22,6 @@ competition Competition;
 /*  motors spin forward.                                                     */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                             JAR-Template Config                           */
-/*                                                                           */
-/*  Where all the magic happens. Follow the instructions below to input      */
-/*  all the physical constants and values for your robot. You should         */
-/*  already have configured your motors.                                     */
-/*---------------------------------------------------------------------------*/
-
-#pragma region JAR-Template(DCTI varient) Config
-Drive chassis(
-
-//Pick your drive setup from the list below:
-//ZERO_TRACKER_NO_ODOM
-//ZERO_TRACKER_ODOM
-//TANK_ONE_FORWARD_ENCODER
-//TANK_ONE_FORWARD_ROTATION
-//TANK_ONE_SIDEWAYS_ENCODER
-//TANK_ONE_SIDEWAYS_ROTATION
-//TANK_TWO_ENCODER
-//TANK_TWO_ROTATION
-//HOLONOMIC_TWO_ENCODER
-//HOLONOMIC_TWO_ROTATION
-//
-//Write it here:
-ZERO_TRACKER_NO_ODOM,
-
-//Add the names of your Drive motors into the motor groups below, separated by commas, i.e. motor_group(Motor1,Motor2,Motor3).
-//You will input whatever motor names you chose when you configured your robot using the sidebar configurer, they don't have to be "Motor1" and "Motor2".
-
-//Left Motors:
-LeftDrive,
-
-//Right Motors:
-RightDrive,
-
-//Specify the PORT NUMBER of your inertial sensor, in PORT format (i.e. "PORT1", not simply "1"):
-PORT1,
-
-//Input your wheel diameter. (4" omnis are actually closer to 4.125"):
-4.0,
-
-//External ratio, must be in decimal, in the format of input teeth/output teeth.
-//If your motor has an 84-tooth gear and your wheel has a 60-tooth gear, this value will be 1.4.
-//If the motor drives the wheel directly, this value is 1:
-1.4,
-
-//Gyro scale, this is what your gyro reads when you spin the robot 360 degrees.
-//For most cases 360 will do fine here, but this scale factor can be very helpful when precision is necessary.
-360,
-
-/*---------------------------------------------------------------------------*/
-/*                                  PAUSE!                                   */
-/*                                                                           */
-/*  The rest of the drive constructor is for robots using POSITION TRACKING. */
-/*  If you are not using position tracking, leave the rest of the values as  */
-/*  they are.                                                                */
-/*---------------------------------------------------------------------------*/
-
-//If you are using ZERO_TRACKER_ODOM, you ONLY need to adjust the FORWARD TRACKER CENTER DISTANCE.
-
-//FOR HOLONOMIC DRIVES ONLY: Input your drive motors by position. This is only necessary for holonomic drives, otherwise this section can be left alone.
-//LF:      //RF:    
-PORT1,     -PORT2,
-
-//LB:      //RB: 
-PORT3,     -PORT4,
-
-//If you are using position tracking, this is the Forward Tracker port (the tracker which runs parallel to the direction of the chassis).
-//If this is a rotation sensor, enter it in "PORT1" format, inputting the port below.
-//If this is an encoder, enter the port as an integer. Triport A will be a "1", Triport B will be a "2", etc.
-3,
-
-//Input the Forward Tracker diameter (reverse it to make the direction switch):
-2.75,
-
-//Input Forward Tracker center distance (a positive distance corresponds to a tracker on the right side of the robot, negative is left.)
-//For a zero tracker tank drive with odom, put the positive distance from the center of the robot to the right side of the drive.
-//This distance is in inches:
-8.0,
-
-//Input the Sideways Tracker Port, following the same steps as the Forward Tracker Port:
-1,
-
-//Sideways tracker diameter (reverse to make the direction switch):
--2.75,
-
-//Sideways tracker center distance (positive distance is behind the center of the robot, negative is in front):
-5.5
-
-);
-#pragma endregion
-
 int current_auton_selection = 0;
 bool auto_started = false;
 
@@ -218,16 +126,12 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void arcade(bool reversed){
+void arcade(){
   float throttle = deadband(Controller.Axis3.position(), 5);
   float turn = deadband(Controller.Axis1.position(), 5);
 
   float processed_throttle = scale_input(throttle, ease_in_out_cubic);
   float processed_turn = scale_input(turn, turning_curve);
-
-  if (reversed){
-    processed_throttle = -processed_throttle;
-  }
 
   float left_voltage = to_volt(processed_throttle + processed_turn);
   float right_voltage = to_volt(processed_throttle - processed_turn);
@@ -247,8 +151,15 @@ void usercontrol(void) {
     // update your motors, etc.
     // ........................................................................
 
-    bool isReversed = Controller.ButtonL1.pressing();
-    arcade(isReversed);
+    //Replace this line with chassis.control_tank(); for tank drive 
+    //or chassis.control_holonomic(); for holo drive.
+    bool claw_state = Controller.ButtonL1.pressing();
+    ClawSolenoid.set(claw_state);
+    bool flipper_state = Controller.ButtonL2.pressing();
+    FlipperSolenoid.set(flipper_state);
+    
+    
+    chassis.control_arcade();
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.

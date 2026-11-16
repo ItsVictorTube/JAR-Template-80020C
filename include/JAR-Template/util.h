@@ -32,4 +32,3 @@ float turning_curve(float x);
 float ease_in_out_cubic(float x);
 
 float scale_input(float raw_input, float (*curve)(float));
-#pragma endregion
