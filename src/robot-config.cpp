@@ -1,10 +1,6 @@
 #include "vex.h"
 
 using namespace vex;
-<<<<<<< HEAD
-
-=======
->>>>>>> ec85b229e34b70229f81055271d069be11e01550
 // A global instance of brain used for printing to the V5 Brain screen.
 brain Brain;
 
@@ -12,18 +8,7 @@ brain Brain;
 //motor LeftFront = motor(PORT1, ratio6_1, false);
 
 //Add your devices below, and don't forget to do the same in robot-config.h:
-#pragma region configured devices
-controller Controller(primary);
 
-<<<<<<< HEAD
-motor LeftFront(PORT1, ratio18_1, false);
-motor LeftBack(PORT2, ratio18_1, false);
-motor RightFront(PORT3, ratio18_1, true);
-motor RightBack(PORT4, ratio18_1, true);
-
-motor_group LeftDrive(LeftFront, LeftBack);
-motor_group RightDrive(RightFront, RightBack);
-=======
 #pragma region configured devices
 controller Controller(primary);
 
@@ -131,5 +116,4 @@ PORT5,
 5.5
 
 );
->>>>>>> ec85b229e34b70229f81055271d069be11e01550
 #pragma endregion

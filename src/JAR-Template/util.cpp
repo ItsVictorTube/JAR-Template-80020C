@@ -138,11 +138,7 @@ int to_port(int port){
  */
 
 float deadband(float input, float width){
-<<<<<<< HEAD
-  if (fabsf(input)<width){
-=======
   if (fabs(input)<width){
->>>>>>> ec85b229e34b70229f81055271d069be11e01550
     return(0);
   }
   return(input);
@@ -177,11 +173,7 @@ bool is_line_settled(float desired_X, float desired_Y, float desired_angle_deg, 
  */
 
 float left_voltage_scaling(float drive_output, float heading_output){
-<<<<<<< HEAD
-  float ratio = std::max(fabsf(drive_output+heading_output), fabsf(drive_output-heading_output))/12.0;
-=======
   float ratio = std::max(fabs(drive_output+heading_output), fabs(drive_output-heading_output))/12.0;
->>>>>>> ec85b229e34b70229f81055271d069be11e01550
   if (ratio > 1) {
     return (drive_output+heading_output)/ratio;
   }
@@ -199,11 +191,7 @@ float left_voltage_scaling(float drive_output, float heading_output){
  */
 
 float right_voltage_scaling(float drive_output, float heading_output){
-<<<<<<< HEAD
-  float ratio = std::max(fabsf(drive_output+heading_output), fabsf(drive_output-heading_output))/12.0;
-=======
   float ratio = std::max(fabs(drive_output+heading_output), fabs(drive_output-heading_output))/12.0;
->>>>>>> ec85b229e34b70229f81055271d069be11e01550
   if (ratio > 1) {
     return (drive_output-heading_output)/ratio;
   }
@@ -231,10 +219,6 @@ float clamp_min_voltage(float drive_output, float drive_min_voltage){
   return drive_output;
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> ec85b229e34b70229f81055271d069be11e01550
 float turning_curve(float x) {
   float k = M_PI / 4;
   return sin(k * sin(k * x)) / sin(k);
@@ -257,9 +241,4 @@ float scale_input(float raw_input, float (*curve)(float)) {
 
   // Scale back to the range [-100, 100]
   return curved * 100;
-<<<<<<< HEAD
 }
-#pragma endregion
-=======
-}
->>>>>>> ec85b229e34b70229f81055271d069be11e01550
