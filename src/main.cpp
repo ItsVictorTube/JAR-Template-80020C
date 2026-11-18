@@ -10,18 +10,19 @@ competition Competition;
 
 //Config and autons
 
-/*---------------------------------------------------------------------------*/
-/*                             VEXcode Config                                */
-/*                                                                           */
-/*  Before you do anything else, start by configuring your motors and        */
-/*  sensors. In VEXcode Pro V5, you can do this using the graphical          */
-/*  configurer port icon at the top right. In the VSCode extension, you'll   */
-/*  need to go to robot-config.cpp and robot-config.h and create the         */
-/*  motors yourself by following the style shown. All motors must be         */
-/*  properly reversed, meaning the drive should drive forward when all       */
-/*  motors spin forward.                                                     */
-/*---------------------------------------------------------------------------*/
-
+void imu_calibration(){
+  Brain.Screen.clearScreen();
+  Brain.Screen.setCursor(1,1);
+  Brain.Screen.print("Calibrating IMU, please wait.");
+  chassis.Gyro.calibrate();
+  while(chassis.Gyro.isCalibrating()){
+    task::sleep(10);
+  }
+  Brain.Screen.clearScreen();
+  Brain.Screen.setCursor(1,1);
+  Brain.Screen.print("IMU Calibrated.");
+  task::sleep(1000);
+}
 int current_auton_selection = 0;
 bool auto_started = false;
 
@@ -33,8 +34,9 @@ bool auto_started = false;
  */
 
 void pre_auton(void) {
+  imu_calibration();
+  lift.lift_zero();
   default_constants();
-
   while(!auto_started){
     Brain.Screen.clearScreen();
     Brain.Screen.printAt(5, 20, "JAR Template v1.2.0");
@@ -158,7 +160,7 @@ void usercontrol(void) {
     bool flipper_state = Controller.ButtonL2.pressing();
     FlipperSolenoid.set(flipper_state);
     
-    
+    lift.control_lift(12, 6);
     chassis.control_arcade();
 
     wait(20, msec); // Sleep the task for a short amount of time to

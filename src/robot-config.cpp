@@ -20,7 +20,6 @@ motor RightBack(PORT4, ratio18_1, true);
 motor LiftRight(PORT6, ratio18_1, false);
 motor LiftLeft(PORT5, ratio18_1, true);
 
-motor_group Lift(LiftRight, LiftLeft);
 motor_group LeftDrive(LeftFront, LeftBack);
 motor_group RightDrive(RightFront, RightBack);
 
@@ -116,4 +115,6 @@ PORT5,
 5.5
 
 );
+
+Lift lift(LiftLeft, LiftRight, 1);
 #pragma endregion

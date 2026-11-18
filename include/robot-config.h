@@ -21,3 +21,6 @@ extern motor_group RightDrive;
 
 extern digital_out ClawSolenoid;
 extern digital_out FlipperSolenoid;
+
+extern Drive chassis;
+extern Lift lift;
