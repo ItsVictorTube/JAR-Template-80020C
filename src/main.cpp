@@ -21,7 +21,6 @@ void imu_calibration(){
   Brain.Screen.clearScreen();
   Brain.Screen.setCursor(1,1);
   Brain.Screen.print("IMU Calibrated.");
-  task::sleep(1000);
 }
 int current_auton_selection = 0;
 bool auto_started = false;
