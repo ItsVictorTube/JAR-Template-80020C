@@ -155,4 +155,5 @@ public:
   void control_tank();
   void control_holonomic();
 };
+extern Drive chassis;
 #pragma endregion

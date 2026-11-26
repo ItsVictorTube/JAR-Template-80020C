@@ -12,10 +12,10 @@ brain Brain;
 #pragma region configured devices
 controller Controller(primary);
 
-motor LeftFront(PORT1, ratio18_1, false);
-motor LeftBack(PORT2, ratio18_1, false);
-motor RightFront(PORT3, ratio18_1, true);
-motor RightBack(PORT4, ratio18_1, true);
+motor LeftFront(PORT14, ratio18_1, true);
+motor LeftBack(PORT11, ratio18_1, true);
+motor RightFront(PORT13, ratio18_1, false);
+motor RightBack(PORT1, ratio18_1, false);
 
 motor LiftRight(PORT6, ratio18_1, false);
 motor LiftLeft(PORT5, ratio18_1, true);

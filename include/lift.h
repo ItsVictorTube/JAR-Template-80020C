@@ -40,3 +40,4 @@ class Lift {
 
     void control_lift(float lift_max_voltage, float lift_down_max_voltage);
 };
+extern Lift lift;

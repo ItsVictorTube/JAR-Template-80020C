@@ -34,7 +34,7 @@ bool auto_started = false;
  */
 
 void pre_auton(void) {
-  imu_calibration();
+  // imu_calibration();
   lift.lift_zero();
   default_constants();
   while(!auto_started){
@@ -161,7 +161,7 @@ void usercontrol(void) {
     FlipperSolenoid.set(flipper_state);
     
     lift.control_lift(12, 6);
-    chassis.control_arcade();
+    arcade();
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
