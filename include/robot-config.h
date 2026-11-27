@@ -14,10 +14,10 @@ extern motor LeftBack;
 extern motor RightFront;
 extern motor RightBack;
 
+extern motor flipper;
 extern motor LiftRight;
 extern motor LiftLeft;
 extern motor_group LeftDrive;
 extern motor_group RightDrive;
 
 extern digital_out ClawSolenoid;
-extern digital_out FlipperSolenoid;

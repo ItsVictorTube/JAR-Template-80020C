@@ -17,6 +17,7 @@ motor LeftBack(PORT11, ratio18_1, true);
 motor RightFront(PORT13, ratio18_1, false);
 motor RightBack(PORT1, ratio18_1, false);
 
+motor flipper(PORT12, ratio18_1, false);
 motor LiftRight(PORT6, ratio18_1, false);
 motor LiftLeft(PORT5, ratio18_1, true);
 
@@ -24,8 +25,6 @@ motor_group LeftDrive(LeftFront, LeftBack);
 motor_group RightDrive(RightFront, RightBack);
 
 digital_out ClawSolenoid(Brain.ThreeWirePort.A);
-digital_out FlipperSolenoid(Brain.ThreeWirePort.B);
-
 /*---------------------------------------------------------------------------*/
 /*                             JAR-Template Config                           */
 /*                                                                           */

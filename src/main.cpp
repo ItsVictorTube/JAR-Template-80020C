@@ -157,7 +157,7 @@ void usercontrol(void) {
     bool claw_state = Controller.ButtonL1.pressing();
     ClawSolenoid.set(claw_state);
     bool flipper_state = Controller.ButtonL2.pressing();
-    FlipperSolenoid.set(flipper_state);
+    flipper.spinFor(flipper_state? directionType::fwd : directionType::rev, 180, rotationUnits::deg, false);
     
     lift.control_lift(12, 6);
     arcade();
